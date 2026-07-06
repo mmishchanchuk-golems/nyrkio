@@ -82,7 +82,7 @@ class UserManager(ObjectIDIDMixin, BaseUserManager[User, PydanticObjectId]):
         remoteip = (
             request.headers.get("CF-Connecting-IP")
             or request.headers.get("X-Forwarded-For")
-            or request.client.host
+            or (request.client.host if request.client else None)
         )
 
         validation = await validate_turnstile(token, CF_SECRETKEY, remoteip)
