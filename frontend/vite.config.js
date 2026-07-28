@@ -23,15 +23,30 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      "/p/": {target: "http://localhost/"},
-      //"/p/": {target: "http://nyrkio.com/"},
+      "/p/": {
+        target: "https://nyrkio.com/",
+        changeOrigin: true,
+      },
       "/api": {
-        target: process.env.VITE_API_TARGET || "http://localhost:8000",
-        //target: "https://staging.nyrkio.com",
-        // target: "http://localhost:8001",
+        //target: process.env.VITE_API_TARGET || "http://localhost:8000",
+        target: "https://staging.nyrkio.com",
         changeOrigin: true,
         secure: false,
-        // rewrite: (path) => path.replace(/^\/api/, ""),
+        cookieDomainRewrite: "localhost",
+        configure: (proxy) => {
+          proxy.on("proxyReq", (proxyReq) => {
+            proxyReq.setHeader("origin", "https://staging.nyrkio.com");
+            proxyReq.setHeader("referer", "https://staging.nyrkio.com/");
+          });
+          proxy.on("proxyRes", (proxyRes) => {
+            const setCookie = proxyRes.headers["set-cookie"];
+            if (setCookie) {
+              proxyRes.headers["set-cookie"] = setCookie.map((c) =>
+                c.replace(/;\s*Secure/i, ""),
+              );
+            }
+          });
+        },
       },
     },
   },

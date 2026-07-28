@@ -2,9 +2,10 @@ services:
   mongodb:
     hostname: mongodb.nyrkio.local
     container_name: mongodb
-    image: mongodb/mongodb-community-server:latest
+    image: mongodb/mongodb-community-server:8.0.19-ubi9
     environment:
       - API_PORT=27017
+      - GLIBC_TUNABLES=glibc.pthread.rseq=1
     ports:
       - "27017:27017"
     command: mongod --quiet --logpath /dev/null

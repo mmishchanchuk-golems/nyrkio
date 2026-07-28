@@ -1,0 +1,12 @@
+<mj-section background-color="#fafafa">
+  <mj-column>
+    <mj-text align="center">
+      <h1>Welcome to the Nyrkiö!</h1>
+      <p style="color:#6B6B6B">Thank you for signing up to Nyrkiö!</p>
+      <p>To complete your registration, please confirm your email address<br/>by clicking the button below:</p>
+    </mj-text>
+    <mj-button href="$verify_url">
+      Confirm
+    </mj-button>
+  </mj-column>
+</mj-section>

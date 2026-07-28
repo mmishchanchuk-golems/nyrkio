@@ -1,0 +1,70 @@
+<mjml>
+  <mj-head>
+    <mj-font name="Poppins" href="https://googleapis.com" />
+
+    <mj-attributes>
+      <mj-all font-family="Poppins, Arial, sans-serif" />
+      <mj-text color="#3F3F46" font-size="14px" line-height="1.5"/>
+      <mj-button font-size="14px" background-color="#22C55E" color="#fff"  height="42px" />
+      <mj-social-element background-color="#FAFAFA" border-radius="4px" icon-size="42px" padding="4px" />
+    </mj-attributes>
+
+    <mj-style inline="inline">
+      a {
+        color: #22C55E
+      }
+
+      h1 {
+        text-transform: uppercase;
+        font-size: 16px;
+        letter-spacing: .1em;
+      }
+
+      .custom-social img {
+        display: block !important;
+        border: 1px solid #E6E6E6 !important;
+      }
+    </mj-style>
+  </mj-head>
+
+  <mj-body>
+   <mj-section>
+      <mj-column>
+          <mj-spacer height="20px" />
+      </mj-column>
+   </mj-section>
+
+    <mj-section background-color="#fafafa">
+      <mj-group>
+        <mj-column>
+          <mj-image href="https://nyrkio.com/" align="left" width="72px" src="https://ik.imagekit.io/gin7jzjml/nyrkio/logo.png" alt="Logo" />
+        </mj-column>
+        <mj-column>
+          <mj-text align="right">
+            <a href="https://nyrkio.com/">nyrkio.com</a>
+          </mj-text>
+        </mj-column>
+      </mj-group>
+    </mj-section>
+
+    $body
+
+    <mj-section background-color="#fafafa" background-url="https://ik.imagekit.io/gin7jzjml/nyrkio/background.png" background-repeat="no-repeat" background-size="contain" background-position-y="bottom" background-position-x="right" padding-top="380px">
+      <mj-column>
+        <mj-social font-size="14px" icon-size="34px" mode="horizontal" align="left">
+          <mj-social-element css-class="custom-social" href="https://github.com/nyrkio/nyrkio" src="https://ik.imagekit.io/gin7jzjml/nyrkio/github.png" alt="Github" />
+          <mj-social-element css-class="custom-social" href="https://twitter.com/nyrkio" src="https://ik.imagekit.io/gin7jzjml/nyrkio/twitter.png" alt="Twitter" />
+          <mj-social-element css-class="custom-social" href="https://www.youtube.com/@Nyrkio" src="https://ik.imagekit.io/gin7jzjml/nyrkio/youtube.png" alt="Youtube" />
+          <mj-social-element css-class="custom-social" href="https://www.instagram.com/nyrk.io/" src="https://ik.imagekit.io/gin7jzjml/nyrkio/instagram.png" alt="Instagram" />
+          <mj-social-element css-class="custom-social" href="https://www.tiktok.com/@nyrk.io" src="https://ik.imagekit.io/gin7jzjml/nyrkio/tiktok.png" alt="TikTok" />
+        </mj-social>
+      </mj-column>
+    </mj-section>
+
+  <mj-section>
+    <mj-column>
+        <mj-spacer height="20px" />
+    </mj-column>
+  </mj-section>
+  </mj-body>
+</mjml>

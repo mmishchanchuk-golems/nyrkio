@@ -1,10 +1,13 @@
 import logging
 import os
 import smtplib
+from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from pathlib import Path
-import httpx
 from string import Template
+
+import httpx
+from mjml import mjml2html
 
 POSTMARK_API_KEY = os.environ.get("POSTMARK_API_KEY", None)
 
@@ -13,20 +16,23 @@ POSTMARK_API_KEY = os.environ.get("POSTMARK_API_KEY", None)
 SMTP_HOST = os.environ.get("SMTP_HOST", None)
 SMTP_PORT = int(os.environ.get("SMTP_PORT", 1025))
 
-# TODO(matt) should be async?
-def read_template_file(template_file: str, **kwargs):
-    path = Path(__file__).parent / f"templates/{template_file}"
-    with open(path, "r") as f:
-        t = Template(f.read())
-        return t.substitute(**kwargs)
+TEMPLATES_DIR = Path(__file__).parent / "templates"
 
 
-async def send_email(email: str, token: str, subject: str, msg: str):
+def render_email(body_template_path: Path, **kwargs) -> str:
     """
-    Send an email to a user with a verification token.
+    Render a per-feature body fragment inside the shared mail/templates/base.mjml
+    layout (header + footer). All template images (logo, background, social
+    icons) are hosted on the ImageKit CDN directly from base.mjml - see there.
     """
+    body = Template(body_template_path.read_text()).substitute(**kwargs)
+    shell = Template((TEMPLATES_DIR / "base.mjml").read_text()).substitute(body=body)
+    return mjml2html(shell, include_loader=lambda p: (TEMPLATES_DIR / p).read_text())
+
+
+async def send_email(email: str, subject: str, html: str):
     if SMTP_HOST:
-        _send_email_smtp(email, subject, msg)
+        _send_email_smtp(email, subject, html)
         return
 
     with httpx.Client() as client:
@@ -41,9 +47,8 @@ async def send_email(email: str, token: str, subject: str, msg: str):
             json={
                 "From": "helloworld@nyrkio.com",
                 "To": email,
-                # "To": "henrik@nyrkio.com",
                 "Subject": subject,
-                "HtmlBody": msg,
+                "HtmlBody": html,
                 "MessageStream": "outbound",
             },
         )
@@ -51,14 +56,15 @@ async def send_email(email: str, token: str, subject: str, msg: str):
             logging.error(f"Failed to send email: {response.status_code}")
 
 
-def _send_email_smtp(email: str, subject: str, msg: str):
+def _send_email_smtp(email: str, subject: str, html: str):
     """
     Send an email over plain SMTP, e.g. to a local Mailhog instance.
     """
-    message = MIMEText(msg, "html")
+    message = MIMEMultipart("related")
     message["Subject"] = subject
     message["From"] = "helloworld@nyrkio.com"
     message["To"] = email
+    message.attach(MIMEText(html, "html"))
 
     try:
         with smtplib.SMTP(SMTP_HOST, SMTP_PORT) as server:

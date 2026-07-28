@@ -1,5 +1,6 @@
 import httpx
 import logging
+from pathlib import Path
 
 from fastapi import APIRouter, Depends, Request, HTTPException
 
@@ -17,9 +18,7 @@ from typing import Optional
 from beanie import PydanticObjectId
 from fastapi_users.db import BeanieUserDatabase, ObjectIDIDMixin
 
-from backend.auth.email import send_email, read_template_file
-
-# from backend.auth.email import read_template_file
+from backend.mail.sender import send_email, render_email
 from fastapi_users.authentication import JWTStrategy
 import os
 
@@ -43,6 +42,7 @@ GOOGLE_RECAPTCHA_SECRETKEY = os.environ.get("GOOGLE_RECAPTCHA_SECRETKEY")
 CF_SECRETKEY = os.environ.get("CF_SECRETKEY")
 # The sitekey is just for the frontend to do its api request
 # GOOGLE_RECAPTCHA_SITEKEY = os.environ.get("GOOGLE_RECAPTCHA_SITEKEY")
+AUTH_TEMPLATES_DIR = Path(__file__).parents[1] / "auth/templates"
 
 
 async def get_user_manager(user_db: BeanieUserDatabase = Depends(get_user_db)):
@@ -146,10 +146,10 @@ class UserManager(ObjectIDIDMixin, BaseUserManager[User, PydanticObjectId]):
     ):
         logging.info(f"User {user.id} has forgot their password. Reset token: {token}")
         reset_url = f"{SERVER_NAME}/forgot-password?token={token}"
-        msg = read_template_file("forgot-password.html", reset_url=reset_url)
-        await send_email(
-            user.email, token, "Request to reset password. (nyrkio.com)", msg
+        html = render_email(
+            AUTH_TEMPLATES_DIR / "forgot-password.mjml", reset_url=reset_url
         )
+        await send_email(user.email, "Request to reset password. (nyrkio.com)", html)
 
     async def on_after_request_verify(
         self, user: User, token: str, request: Optional[Request] = None
@@ -178,9 +178,11 @@ class UserManager(ObjectIDIDMixin, BaseUserManager[User, PydanticObjectId]):
             )
 
         verify_url = f"{SERVER_NAME}/api/v0/auth/verify-email/{token}"
-        msg = read_template_file("verify-email.html", verify_url=verify_url)
+        html = render_email(
+            AUTH_TEMPLATES_DIR / "verify-email.mjml", verify_url=verify_url
+        )
         await send_email(
-            user.email, token, "Verify your email (nyrkio.com new user creation)", msg
+            user.email, "Verify your email (nyrkio.com new user creation)", html
         )
         return {
             "status": "ok",
