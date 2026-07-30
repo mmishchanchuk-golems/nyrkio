@@ -28,11 +28,11 @@
   </mj-head>
 
   <mj-body>
-   <mj-section>
+    <mj-section>
       <mj-column>
           <mj-spacer height="20px" />
       </mj-column>
-   </mj-section>
+    </mj-section>
 
     <mj-section background-color="#fafafa">
       <mj-group>
@@ -61,10 +61,10 @@
       </mj-column>
     </mj-section>
 
-  <mj-section>
-    <mj-column>
-        <mj-spacer height="20px" />
-    </mj-column>
-  </mj-section>
+    <mj-section>
+      <mj-column>
+          <mj-spacer height="20px" />
+      </mj-column>
+    </mj-section>
   </mj-body>
 </mjml>

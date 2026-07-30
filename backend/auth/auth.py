@@ -284,7 +284,7 @@ async def verify_email(
         user = await user_manager.verify(token, None)
         schema = schemas.model_validate(UserRead, user)
         if user.is_verified:
-            return RedirectResponse("/login")
+            return RedirectResponse("/login#email")
         return schema
 
     except (exceptions.InvalidVerifyToken, exceptions.UserNotExists):
